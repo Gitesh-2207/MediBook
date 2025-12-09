@@ -1,0 +1,26 @@
+
+ @import "tailwindcss";
+ 
+.active hr{
+  display: block;
+}
+
+.nav-link.active hr {
+  display: block;
+}
+/* hide hr by default */
+.nav-link hr {
+  display: none;
+}
+
+/* show hr only on active nav link */
+.nav-link.active hr {
+  display: block;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
