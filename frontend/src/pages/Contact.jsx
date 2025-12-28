@@ -15,7 +15,7 @@ const Contact = () => {
           <p className='font-semibold text-lg text-gray-600'>OUR OFFICE</p>
           <p className='text-gray-500'>123 ABC PARK </p>
           <p className='text-gray-500'>tel:987654321</p>
-          <p className='font -semibold text-lg text-gray-600'>Carrer at prescripto</p>
+          <p className='font -semibold text-lg text-gray-600'>Carrer at Medibook</p>
           <p>learn about our team</p>
           <button className='border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500'>Explore Jobs</button>
         </div>

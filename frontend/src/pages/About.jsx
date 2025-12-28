@@ -22,17 +22,15 @@ const About = () => {
         {/* Right side - Text */}
         <div className='md:w-1/2 space-y-4 text-gray-700'>
           <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos accusamus nam perspiciatis asperiores quibusdam?
-            Quas modi expedita, asperiores, necessitatibus sequi dolor ad reiciendis magni beatae provident facere inventore, dolores quos!
+            MediBook is a modern doctor appointment booking platform designed to make healthcare access simple, fast, and reliable. We connect patients with qualified and trusted healthcare professionals, allowing easy appointment scheduling from anywhere, at any time.
           </p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto officia similique ipsa mollitia consequuntur, corporis quibusdam eius?
-            Totam ab officiis veniam omnis dolor dolores consectetur, nobis iste, architecto, similique reiciendis.
+            Our mission is to reduce waiting time and improve the patient experience by offering a seamless digital solution. With MediBook, users can find the right specialist, view availability, and manage appointments effortlessly, ensuring quality healthcare is always within reach.
           </p>
           <p className="mt-6 text-xl font-semibold">Our Vision</p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium ipsam impedit, repellendus et ea accusantium,
-            totam mollitia eligendi officia numquam est laudantium, accusamus omnis. Facere explicabo saepe pariatur delectus odit!
+            Our vision at MediBook is to make quality healthcare accessible to everyone through technology. We aim to simplify the doctor appointment process by creating a reliable, user-friendly platform that connects patients with healthcare professionals efficiently.
+            By leveraging innovation and digital solutions, MediBook strives to reduce waiting times, improve patient care, and support a healthier, more connected community.
           </p>
         </div>
       </div>
@@ -43,12 +41,12 @@ const About = () => {
         <div className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
           <b>Efficiency</b>
           <p>hello hello hello </p>
-          </div>
-        <div  className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
+        </div>
+        <div className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
           <b>convience</b>
           <p>hello hello hello </p>
         </div>
-        <div  className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
+        <div className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
           <b>presonilization</b>
           <p>hello hello hello </p>
         </div>
