@@ -14,18 +14,20 @@ const DoctorAppointments = () => {
         }
     }, [dToken]);
 
-    // ✅ Status label styling
-    const getStatusLabel = (appointment) => {
-        if (appointment.cancelled) {
-            return { text: "Rejected", color: "text-red-600" };
-        } else if (appointment.isCompleted) {
-            return { text: "Completed", color: "text-green-600" };
-        } else {
-            return { text: "Pending", color: "text-yellow-600" };
+    // ✅ STATUS LOGIC (SAME AS DOCTOR DASHBOARD)
+    const getStatusLabel = (appointment = {}) => {
+        if (appointment.cancelled === true) {
+            return { text: "Cancelled", color: "text-red-600" };
         }
+
+        if (appointment.payment === true) {
+            return { text: "Completed", color: "text-green-600" };
+        }
+
+        return { text: "Pending", color: "text-yellow-600" };
     };
 
-    // ✅ Unified update function (Accept / Reject / Complete)
+    // ✅ Update status API (UNCHANGED)
     const updateStatus = async (appointmentId, status) => {
         setLoadingIds((prev) => ({ ...prev, [appointmentId]: true }));
         try {
@@ -60,8 +62,8 @@ const DoctorAppointments = () => {
                 {/* Header Row */}
                 <div
                     className="grid grid-cols-[0.3fr_2fr_1fr_1.5fr_1.5fr_1fr_1fr_2fr]
-          items-center bg-gray-100 text-gray-800 font-semibold
-          py-3 px-6 border-b border-gray-300 text-[15px] sticky top-0 z-10"
+                    items-center bg-gray-100 text-gray-800 font-semibold
+                    py-3 px-6 border-b border-gray-300 text-[15px] sticky top-0 z-10"
                 >
                     <p className="text-center">#</p>
                     <p>Patient</p>
@@ -76,23 +78,27 @@ const DoctorAppointments = () => {
                 {appointments && appointments.length > 0 ? (
                     appointments.map((appointment, index) => {
                         const { text, color } = getStatusLabel(appointment);
+
+                        // ✅ DISABLE LOGIC (LOGIC ONLY)
                         const isDisabled =
-                            appointment.isCompleted || appointment.cancelled;
+                            appointment.payment === true ||
+                            appointment.cancelled === true;
+
                         const isLoading = loadingIds[appointment._id];
 
                         return (
                             <div
                                 key={appointment._id || index}
                                 className="grid grid-cols-[0.3fr_2fr_1fr_1.5fr_1.5fr_1fr_1fr_2fr]
-                items-center py-3 px-6 text-[15px]
-                hover:bg-blue-50 transition-all duration-200 ease-in-out border-b border-gray-200"
+                                items-center py-3 px-6 text-[15px]
+                                hover:bg-blue-50 transition-all duration-200 ease-in-out border-b border-gray-200"
                             >
                                 {/* # */}
                                 <p className="text-center text-gray-700 font-medium">
                                     {index + 1}
                                 </p>
 
-                                {/* Patient Name */}
+                                {/* Patient */}
                                 <div>
                                     <p className="text-gray-800 font-medium">
                                         {appointment.userData?.name || "N/A"}
@@ -112,29 +118,37 @@ const DoctorAppointments = () => {
                                 {/* Date & Time */}
                                 <p className="text-gray-700">
                                     {appointment.slotDate}{" "}
-                                    <span className="text-gray-500">{appointment.slotTime}</span>
+                                    <span className="text-gray-500">
+                                        {appointment.slotTime}
+                                    </span>
                                 </p>
 
                                 {/* Payment */}
                                 <p
-                                    className={`text-center font-semibold ${appointment.payment ? "text-green-600" : "text-gray-500"
+                                    className={`text-center font-semibold ${appointment.payment
+                                            ? "text-green-600"
+                                            : "text-gray-500"
                                         }`}
                                 >
                                     {appointment.payment ? "Paid" : "Unpaid"}
                                 </p>
 
-                                {/* Fees */}
+                                {/* Fees (₹ COLOR UNCHANGED ✅) */}
                                 <p
-                                    className={`text-center font-semibold ${appointment.amount ? "text-green-600" : "text-gray-400"
+                                    className={`text-center font-semibold ${appointment.amount
+                                            ? "text-green-600"
+                                            : "text-gray-400"
                                         }`}
                                 >
-                                    {appointment.amount ? `$${appointment.amount}` : "N/A"}
+                                    {appointment.amount
+                                        ? `₹${appointment.amount}`
+                                        : "N/A"}
                                 </p>
 
                                 {/* Status */}
-                                <p className={`text-center font-semibold ${color}`}>{text}</p>
-
-
+                                <p className={`text-center font-semibold ${color}`}>
+                                    {text}
+                                </p>
                             </div>
                         );
                     })

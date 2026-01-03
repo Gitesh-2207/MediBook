@@ -3,7 +3,8 @@ import { AdminContext } from "../../context/AdminContext";
 import { AppContext } from "../../context/AppContext";
 
 const AllAppointments = () => {
-  const { aToken, appointments, getAllAppointments } = useContext(AdminContext);
+  const { aToken, appointments, getAllAppointments } =
+    useContext(AdminContext);
   const { calculateAge } = useContext(AppContext);
 
   useEffect(() => {
@@ -12,18 +13,29 @@ const AllAppointments = () => {
     }
   }, [aToken]);
 
-  // Determine appointment status
+  // ✅ Correct Appointment Status Logic
   const getStatusLabel = (appointment) => {
-    if (appointment.cancelled) {
-      return { text: "Cancelled", color: "text-red-600 bg-red-50" };
-    } else if (appointment.payment && appointment.payment === true) {
-      return { text: "Completed", color: "text-green-600 bg-green-50" };
-    } else {
-      return { text: "Pending", color: "text-yellow-600 bg-yellow-50" };
+    if (appointment.cancelled === true) {
+      return {
+        text: "Cancelled",
+        color: "text-red-600 bg-red-100",
+      };
     }
+
+    if (appointment.payment === true) {
+      return {
+        text: "Completed",
+        color: "text-green-600 bg-green-100",
+      };
+    }
+
+    return {
+      text: "Pending",
+      color: "text-yellow-600 bg-yellow-100",
+    };
   };
 
-  // Format date
+  // ✅ Correct Date Format (dd_mm_yyyy → dd/mm/yyyy)
   const formatSlotDate = (dateStr) => {
     if (!dateStr) return "-";
     const [day, month, year] = dateStr.split("_");
@@ -34,19 +46,14 @@ const AllAppointments = () => {
   return (
     <div className="w-full max-w-6xl mx-auto my-6 px-4">
       {/* Title */}
-      <p className="mb-5 text-2xl font-bold text-gray-800 border-b pb-2 tracking-wide">
+      <p className="mb-5 text-2xl font-bold text-gray-800 border-b pb-2">
         📅 All Appointments
       </p>
 
-      {/* Table Wrapper */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-md text-sm max-h-[80vh] min-h-[60vh] overflow-y-auto">
+      {/* Table */}
+      <div className="bg-white border rounded-xl shadow-md text-sm max-h-[80vh] overflow-y-auto">
         {/* Header */}
-        <div
-          className="grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_0.8fr]
-          items-center bg-gradient-to-r from-blue-100 to-blue-50 
-          text-gray-800 font-semibold py-3 px-6 border-b border-gray-300 
-          text-[15px] sticky top-0 z-10"
-        >
+        <div className="grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_1fr] bg-blue-50 font-semibold py-3 px-6 sticky top-0 z-10 border-b">
           <p className="text-center">#</p>
           <p>Patient</p>
           <p className="text-center">Age</p>
@@ -56,63 +63,53 @@ const AllAppointments = () => {
           <p className="text-center">Status</p>
         </div>
 
-        {/* Data Rows */}
+        {/* Rows */}
         {appointments && appointments.length > 0 ? (
           appointments.map((appointment, index) => {
             const { text, color } = getStatusLabel(appointment);
-            const isEven = index % 2 === 0;
 
             return (
               <div
-                key={appointment._id || index}
-                className={`grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_0.8fr]
-                items-center py-3 px-6 text-[15px]
-                ${isEven ? "bg-gray-50" : "bg-white"}
-                hover:bg-blue-50 hover:shadow-sm transition-all duration-200 border-b`}
+                key={appointment._id}
+                className={`grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_1fr]
+                py-3 px-6 items-center border-b hover:bg-blue-50`}
               >
-                {/* # */}
-                <p className="text-center text-gray-700 font-medium">
-                  {index + 1}
-                </p>
+                {/* Index */}
+                <p className="text-center">{index + 1}</p>
 
-                {/* Patient Name */}
-                <p className="text-gray-800 font-medium truncate">
+                {/* Patient */}
+                <p className="font-medium">
                   {appointment.userData?.name || "N/A"}
                 </p>
 
                 {/* Age */}
-                <p className="text-center text-gray-600">
+                <p className="text-center">
                   {appointment.userData?.dob
                     ? calculateAge(appointment.userData.dob)
                     : "-"}
                 </p>
 
                 {/* Date & Time */}
-                <p className="text-gray-700 font-medium">
+                <p>
                   {formatSlotDate(appointment.slotDate)}{" "}
-                  <span className="text-gray-500 text-sm ml-1">
-                    {appointment.slotTime || ""}
+                  <span className="text-gray-500 text-sm">
+                    {appointment.slotTime}
                   </span>
                 </p>
 
                 {/* Doctor */}
-                <p className="text-gray-800 font-medium truncate">
+                <p className="font-medium">
                   {appointment.docData?.name || "N/A"}
                 </p>
 
                 {/* Amount */}
-                <p
-                  className={`text-center font-semibold ${appointment.amount
-                      ? "text-green-600"
-                      : "text-gray-400"
-                    }`}
-                >
+                <p className="text-center font-semibold text-green-600">
                   {appointment.amount ? `₹${appointment.amount}` : "N/A"}
                 </p>
 
                 {/* Status */}
                 <p
-                  className={`text-center font-semibold rounded-full px-2 py-1 text-sm ${color}`}
+                  className={`text-center font-semibold rounded-full px-3 py-1 ${color}`}
                 >
                   {text}
                 </p>
@@ -120,7 +117,7 @@ const AllAppointments = () => {
             );
           })
         ) : (
-          <div className="py-10 text-center text-gray-500 text-base">
+          <div className="py-10 text-center text-gray-500">
             No appointments found.
           </div>
         )}
