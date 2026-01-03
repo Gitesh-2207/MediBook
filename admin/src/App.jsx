@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Login from "./pages/Login";
 import NavBar from "./components/NavBar";
-import Sidebar from "./components/SideBar";
+import Sidebar from "./components/Sidebar";
 
 import Dashboard from "./pages/Admin/Dashboard";
 import AllAppointments from "./pages/Admin/AllAppointments";
