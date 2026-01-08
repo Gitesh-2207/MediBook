@@ -13,47 +13,34 @@ const AllAppointments = () => {
     }
   }, [aToken]);
 
-  // ✅ Correct Appointment Status Logic
+  // ---- STATUS LOGIC ----
   const getStatusLabel = (appointment) => {
     if (appointment.cancelled === true) {
-      return {
-        text: "Cancelled",
-        color: "text-red-600 bg-red-100",
-      };
+      return { text: "Cancelled", color: "text-red-600 bg-red-100" };
     }
-
     if (appointment.payment === true) {
-      return {
-        text: "Completed",
-        color: "text-green-600 bg-green-100",
-      };
+      return { text: "Completed", color: "text-green-600 bg-green-100" };
     }
-
-    return {
-      text: "Pending",
-      color: "text-yellow-600 bg-yellow-100",
-    };
+    return { text: "Pending", color: "text-yellow-600 bg-yellow-100" };
   };
 
-  // ✅ Correct Date Format (dd_mm_yyyy → dd/mm/yyyy)
+  // ---- DATE FORMAT ----
   const formatSlotDate = (dateStr) => {
     if (!dateStr) return "-";
     const [day, month, year] = dateStr.split("_");
-    if (!day || !month || !year) return dateStr;
     return `${day}/${month}/${year}`;
   };
 
   return (
     <div className="w-full max-w-6xl mx-auto my-6 px-4">
       {/* Title */}
-      <p className="mb-5 text-2xl font-bold text-gray-800 border-b pb-2">
+      <p className="mb-5 text-2xl font-bold text-gray-800">
         📅 All Appointments
       </p>
 
-      {/* Table */}
-      <div className="bg-white border rounded-xl shadow-md text-sm max-h-[80vh] overflow-y-auto">
-        {/* Header */}
-        <div className="grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_1fr] bg-blue-50 font-semibold py-3 px-6 sticky top-0 z-10 border-b">
+      <div className="bg-white rounded-xl shadow-md border border-white overflow-hidden">
+        {/* ---- DESKTOP HEADER ---- */}
+        <div className="hidden md:grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_1fr] bg-blue-50 font-semibold py-3 px-6 text-sm">
           <p className="text-center">#</p>
           <p>Patient</p>
           <p className="text-center">Age</p>
@@ -63,7 +50,7 @@ const AllAppointments = () => {
           <p className="text-center">Status</p>
         </div>
 
-        {/* Rows */}
+        {/* ---- APPOINTMENTS ---- */}
         {appointments && appointments.length > 0 ? (
           appointments.map((appointment, index) => {
             const { text, color } = getStatusLabel(appointment);
@@ -71,48 +58,82 @@ const AllAppointments = () => {
             return (
               <div
                 key={appointment._id}
-                className={`grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_1fr]
-                py-3 px-6 items-center border-b hover:bg-blue-50`}
+                className="border-t border-white hover:bg-blue-50 transition px-4 py-4 md:px-6 md:py-3"
               >
-                {/* Index */}
-                <p className="text-center">{index + 1}</p>
+                {/* ---- MOBILE VIEW ---- */}
+                <div className="md:hidden space-y-2">
+                  <p className="font-medium text-gray-800">
+                    {appointment.userData?.name || "N/A"}
+                  </p>
 
-                {/* Patient */}
-                <p className="font-medium">
-                  {appointment.userData?.name || "N/A"}
-                </p>
+                  <p className="text-sm text-gray-500">
+                    Age:{" "}
+                    {appointment.userData?.dob
+                      ? calculateAge(appointment.userData.dob)
+                      : "-"}
+                  </p>
 
-                {/* Age */}
-                <p className="text-center">
-                  {appointment.userData?.dob
-                    ? calculateAge(appointment.userData.dob)
-                    : "-"}
-                </p>
-
-                {/* Date & Time */}
-                <p>
-                  {formatSlotDate(appointment.slotDate)}{" "}
-                  <span className="text-gray-500 text-sm">
+                  <p className="text-sm text-gray-600">
+                    {formatSlotDate(appointment.slotDate)} •{" "}
                     {appointment.slotTime}
-                  </span>
-                </p>
+                  </p>
 
-                {/* Doctor */}
-                <p className="font-medium">
-                  {appointment.docData?.name || "N/A"}
-                </p>
+                  <p className="text-sm font-medium text-gray-700">
+                    Doctor: {appointment.docData?.name || "N/A"}
+                  </p>
 
-                {/* Amount */}
-                <p className="text-center font-semibold text-green-600">
-                  {appointment.amount ? `₹${appointment.amount}` : "N/A"}
-                </p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="font-semibold text-green-600">
+                      {appointment.amount
+                        ? `₹${appointment.amount}`
+                        : "N/A"}
+                    </p>
 
-                {/* Status */}
-                <p
-                  className={`text-center font-semibold rounded-full px-3 py-1 ${color}`}
-                >
-                  {text}
-                </p>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${color}`}
+                    >
+                      {text}
+                    </span>
+                  </div>
+                </div>
+
+                {/* ---- DESKTOP VIEW ---- */}
+                <div className="hidden md:grid grid-cols-[0.3fr_2fr_1fr_2fr_2fr_1fr_1fr] items-center">
+                  <p className="text-center">{index + 1}</p>
+
+                  <p className="font-medium">
+                    {appointment.userData?.name || "N/A"}
+                  </p>
+
+                  <p className="text-center">
+                    {appointment.userData?.dob
+                      ? calculateAge(appointment.userData.dob)
+                      : "-"}
+                  </p>
+
+                  <p>
+                    {formatSlotDate(appointment.slotDate)}{" "}
+                    <span className="text-gray-500 text-sm">
+                      {appointment.slotTime}
+                    </span>
+                  </p>
+
+                  <p className="font-medium">
+                    {appointment.docData?.name || "N/A"}
+                  </p>
+
+                  <p className="text-center font-semibold text-green-600">
+                    {appointment.amount
+                      ? `₹${appointment.amount}`
+                      : "N/A"}
+                  </p>
+
+                  <p
+                    className={`text-center font-semibold rounded-full px-3 py-1 text-xs ${color}`}
+                  >
+                    {text}
+                  </p>
+                </div>
               </div>
             );
           })

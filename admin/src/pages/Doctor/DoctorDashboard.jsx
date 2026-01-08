@@ -30,12 +30,20 @@ const DoctorDashboard = () => {
     // SAME status logic style as All Appointments
     const getStatusLabel = (appointment) => {
         if (appointment.cancelled) {
-            return { text: "Cancelled", color: "text-red-600" };
+            return { text: "Cancelled", color: "text-red-600 bg-red-100" };
         } else if (appointment.payment === true) {
-            return { text: "Completed", color: "text-green-600" };
+            return { text: "Completed", color: "text-green-600 bg-green-100" };
         } else {
-            return { text: "Pending", color: "text-yellow-600" };
+            return { text: "Pending", color: "text-yellow-600 bg-yellow-100" };
         }
+    };
+
+    // Format date from "dd_mm_yyyy" → "dd/mm/yyyy"
+    const formatSlotDate = (dateStr) => {
+        if (!dateStr) return "-";
+        const [day, month, year] = dateStr.split("_");
+        if (!day || !month || !year) return dateStr;
+        return `${day}/${month}/${year}`;
     };
 
     return (
@@ -63,50 +71,53 @@ const DoctorDashboard = () => {
             </div>
 
             {/* Latest Appointments */}
-            <div className="mt-10">
-                <h3 className="text-xl font-semibold mb-4">
-                    Latest Appointments
-                </h3>
+            <div className="mt-10 bg-white border border-white rounded-xl shadow-md">
 
+                {/* Header */}
+                <div className="grid grid-cols-[0.3fr_2fr_1.5fr_1fr_1fr]
+                    bg-blue-50 font-semibold py-3 px-6 sticky top-0 z-10 border-b border-white">
+                    <p className="text-center">#</p>
+                    <p>Patient</p>
+                    <p>Date</p>
+                    <p>Time</p>
+                    <p className="text-center">Status</p>
+                </div>
+
+                {/* Rows */}
                 {latestAppointments && latestAppointments.length > 0 ? (
-                    <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-2 border">#</th>
-                                <th className="p-2 border">Patient</th>
-                                <th className="p-2 border">Date</th>
-                                <th className="p-2 border">Time</th>
-                                <th className="p-2 border">Status</th>
-                            </tr>
-                        </thead>
+                    latestAppointments.map((item, index) => {
+                        const { text, color } = getStatusLabel(item);
 
-                        <tbody>
-                            {latestAppointments.map((item, index) => {
-                                const { text, color } = getStatusLabel(item);
+                        return (
+                            <div
+                                key={item._id}
+                                className="grid grid-cols-[0.3fr_2fr_1.5fr_1fr_1fr]
+                                items-center py-3 px-6 border-b border-white
+                                hover:bg-blue-50 transition"
+                            >
+                                <p className="text-center">{index + 1}</p>
 
-                                return (
-                                    <tr key={item._id} className="text-center border-t">
-                                        <td className="p-2 border">{index + 1}</td>
+                                <p className="font-medium text-gray-800">
+                                    {item.userData?.name || "N/A"}
+                                </p>
 
-                                        <td className="p-2 border">
-                                            {item.userData?.name || "N/A"}
-                                        </td>
+                                {/* Format date here */}
+                                <p className="text-gray-700">{formatSlotDate(item.slotDate)}</p>
 
-                                        {/* ✅ CORRECT DATE (same as All Appointments) */}
-                                        <td className="p-2 border">{item.slotDate}</td>
+                                <p className="text-gray-700">{item.slotTime}</p>
 
-                                        <td className="p-2 border">{item.slotTime}</td>
-
-                                        <td className={`p-2 border font-medium ${color}`}>
-                                            {text}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                <p
+                                    className={`text-center font-semibold px-3 py-1 rounded-full ${color}`}
+                                >
+                                    {text}
+                                </p>
+                            </div>
+                        );
+                    })
                 ) : (
-                    <p className="text-gray-500">No recent appointments</p>
+                    <p className="py-6 text-center text-gray-500">
+                        No recent appointments
+                    </p>
                 )}
             </div>
         </div>
