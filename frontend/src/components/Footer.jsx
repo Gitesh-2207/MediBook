@@ -72,7 +72,7 @@ const Footer = () => {
       </div>
 
       <div>
-        <hr />
+
         <p className="py-5 text-sm text-center">Copyright @ Medibook 2025. All Rights Reserved.</p>
       </div>
     </div>

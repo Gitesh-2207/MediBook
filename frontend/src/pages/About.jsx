@@ -34,22 +34,51 @@ const About = () => {
           </p>
         </div>
       </div>
-      <div className='text' >
-        <p>WHY <span className='text-gray-700 font-semibold'>Choose us</span></p>
+      <div className='text-center py-12'>
+        <p className='text-3xl md:text-4xl font-bold text-gray-800 tracking-wide'>
+          WHY <span className='text-[#5f6FFF]'>Choose Us</span>
+        </p>
+        <div className='w-24 h-1 bg-[#5f6FFF] mx-auto mt-3 rounded-full'></div>
       </div>
-      <div className='flex flex-col md:flex-row mb-20'>
-        <div className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
-          <b>Efficiency</b>
-          <p>hello hello hello </p>
+
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto px-4 mb-20'>
+
+        <div className='group border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 bg-white cursor-pointer'>
+          <div className='w-14 h-14 flex items-center justify-center rounded-full bg-[#eef1ff] text-[#5f6FFF] text-2xl font-bold mb-6 transition-all duration-200'>
+            ⚡
+          </div>
+          <b className='text-2xl text-gray-800'>
+            Efficiency
+          </b>
+          <p className='text-gray-600 mt-4 leading-7 text-[15px]'>
+            Book appointments quickly with a simple, step-by-step flow — no unnecessary delays.
+          </p>
         </div>
-        <div className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
-          <b>convience</b>
-          <p>hello hello hello </p>
+
+        <div className='group border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 bg-white cursor-pointer'>
+          <div className='w-14 h-14 flex items-center justify-center rounded-full bg-[#eef1ff] text-[#5f6FFF] text-2xl font-bold mb-6 transition-all duration-200'>
+            📅
+          </div>
+          <b className='text-2xl text-gray-800'>
+            Convenience
+          </b>
+          <p className='text-gray-600 mt-4 leading-7 text-[15px]'>
+            Choose your doctor and preferred time slot anytime, anywhere, and manage appointments easily.
+          </p>
         </div>
-        <div className='border px-10 md:px-16 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-[#5f6FFF] hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
-          <b>presonilization</b>
-          <p>hello hello hello </p>
+
+        <div className='group border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 bg-white cursor-pointer'>
+          <div className='w-14 h-14 flex items-center justify-center rounded-full bg-[#eef1ff] text-[#5f6FFF] text-2xl font-bold mb-6 transition-all duration-200'>
+            👨‍⚕️
+          </div>
+          <b className='text-2xl text-gray-800'>
+            Personalization
+          </b>
+          <p className='text-gray-600 mt-4 leading-7 text-[15px]'>
+            Find the right specialist with detailed doctor profiles, ratings, and availability information.
+          </p>
         </div>
+
       </div>
     </div>
   )

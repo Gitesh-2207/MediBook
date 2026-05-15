@@ -5,7 +5,9 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { backendUrl, setToken, token } = useContext(AppContext); // ✅ added token
+
+  const { backendUrl, setToken, token } = useContext(AppContext);
+
   const navigate = useNavigate();
 
   const [state, setState] = useState("Sign Up");
@@ -13,135 +15,227 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  // Submit Form
   const onSubmitHandle = async (event) => {
+
     event.preventDefault();
+
     try {
+
+      // Sign Up
       if (state === "Sign Up") {
-        // ✅ Register user
-        const { data } = await axios.post(`${backendUrl}/api/user/register`, {
-          name,
-          password,
-          email,
-        });
+
+        const { data } = await axios.post(
+          `${backendUrl}/api/user/register`,
+          {
+            name,
+            email,
+            password,
+          }
+        );
 
         if (data.success) {
+
           localStorage.setItem("token", data.token);
           setToken(data.token);
+
           toast.success("Account created successfully!");
           navigate("/");
+
         } else {
+
           toast.error(data.message);
+
         }
-      } else {
-        // ✅ Login user
-        const { data } = await axios.post(`${backendUrl}/api/user/login`, {
-          password,
-          email,
-        });
+
+      }
+
+      // Login
+      else {
+
+        const { data } = await axios.post(
+          `${backendUrl}/api/user/login`,
+          {
+            email,
+            password,
+          }
+        );
 
         if (data.success) {
+
           localStorage.setItem("token", data.token);
           setToken(data.token);
+
           toast.success("Logged in successfully!");
           navigate("/");
+
         } else {
+
           toast.error(data.message);
+
         }
+
       }
+
     } catch (error) {
-      console.error(error);
+
+      console.log(error);
       toast.error("Something went wrong. Please try again.");
+
     }
+
   };
 
+  // Redirect if logged in
   useEffect(() => {
+
     if (token) {
       navigate("/");
     }
+
   }, [token, navigate]);
 
   return (
+
     <form
-      className="min-h-[80vh] flex items-center justify-center bg-gray-50"
+      className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4"
       onSubmit={onSubmitHandle}
     >
-      <div className="flex flex-col gap-4 mx-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-700 text-sm shadow-lg bg-white">
-        <p className="text-2xl font-semibold text-gray-800">
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </p>
-        <p className="text-gray-500">
-          Please {state === "Sign Up" ? "create an account" : "log in"} to book
-          an appointment
-        </p>
 
+      <div className="flex flex-col gap-4 w-full max-w-md p-8 rounded-2xl bg-white shadow-md text-sm text-gray-700">
+
+        {/* Heading */}
+        <div>
+
+          <p className="text-2xl font-semibold text-gray-800">
+
+            {state === "Sign Up"
+              ? "Create Account"
+              : "Login"}
+
+          </p>
+
+          <p className="text-gray-500 mt-1">
+
+            Please{" "}
+
+            {state === "Sign Up"
+              ? "create an account"
+              : "log in"}{" "}
+
+            to continue
+
+          </p>
+
+        </div>
+
+        {/* Full Name */}
         {state === "Sign Up" && (
+
           <div className="w-full">
-            <p className="mb-1">Full Name</p>
+
+            <p className="mb-2 font-medium text-gray-700">
+              Full Name
+            </p>
+
             <input
-              className="w-full border border-zinc-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#5f6FFF] focus:border-[#5f6FFF]"
               type="text"
               placeholder="Enter your full name"
-              onChange={(e) => setName(e.target.value)}
               value={name}
+              onChange={(e) => setName(e.target.value)}
               required
+              className="w-full bg-gray-100 px-4 py-3 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-[#5f6FFF]"
             />
+
           </div>
+
         )}
 
+        {/* Email */}
         <div className="w-full">
-          <p className="mb-1">E-mail</p>
+
+          <p className="mb-2 font-medium text-gray-700">
+            E-mail
+          </p>
+
           <input
-            className="w-full border border-zinc-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#5f6FFF] focus:border-[#5f6FFF]"
             type="email"
             placeholder="Enter your email"
-            onChange={(e) => setEmail(e.target.value)}
             value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
+            className="w-full bg-gray-100 px-4 py-3 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-[#5f6FFF]"
           />
+
         </div>
 
+        {/* Password */}
         <div className="w-full">
-          <p className="mb-1">Password</p>
+
+          <p className="mb-2 font-medium text-gray-700">
+            Password
+          </p>
+
           <input
-            className="w-full border border-zinc-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#5f6FFF] focus:border-[#5f6FFF]"
             type="password"
             placeholder="Enter your password"
-            onChange={(e) => setPassword(e.target.value)}
             value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
+            className="w-full bg-gray-100 px-4 py-3 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-[#5f6FFF]"
           />
+
         </div>
 
+        {/* Button */}
         <button
-          className="bg-[#5f6FFF] hover:bg-[#4c56e6] transition w-full text-white py-2 rounded-md text-base font-medium shadow-sm"
           type="submit"
+          className="w-full bg-[#5f6FFF] hover:bg-[#4c56e6] transition-all duration-200 text-white py-3 rounded-lg text-base font-medium"
         >
-          {state === "Sign Up" ? "Create Account" : "Login"}
+
+          {state === "Sign Up"
+            ? "Create Account"
+            : "Login"}
+
         </button>
 
-        {state === "Sign Up" ? (
-          <p>
-            Already have an account?{" "}
-            <span
-              className="text-[#5f6FFF] underline cursor-pointer"
-              onClick={() => setState("Login")}
-            >
-              Login here
-            </span>
-          </p>
-        ) : (
-          <p>
-            Create a new account?{" "}
-            <span
-              className="text-[#5f6FFF] underline cursor-pointer"
-              onClick={() => setState("Sign Up")}
-            >
-              Click here
-            </span>
-          </p>
-        )}
+        {/* Switch */}
+        <p className="text-center text-gray-600">
+
+          {state === "Sign Up" ? (
+
+            <>
+              Already have an account?{" "}
+
+              <span
+                className="text-[#5f6FFF] cursor-pointer"
+                onClick={() => setState("Login")}
+              >
+                Login here
+              </span>
+            </>
+
+          ) : (
+
+            <>
+              Create a new account?{" "}
+
+              <span
+                className="text-[#5f6FFF] cursor-pointer"
+                onClick={() => setState("Sign Up")}
+              >
+                Click here
+              </span>
+            </>
+
+          )}
+
+        </p>
+
       </div>
+
     </form>
+
   );
 };
 
