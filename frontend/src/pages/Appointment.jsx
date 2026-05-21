@@ -183,8 +183,8 @@ const Appointment = () => {
               <div
                 onClick={() => setSlotIndex(index)}
                 className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${slotIndex === index
-                    ? "bg-[#5f6FFF] text-white"
-                    : "border border-gray-300"
+                  ? "bg-[#5f6FFF] text-white"
+                  : "border border-gray-300"
                   }`}
                 key={index}
               >
@@ -201,8 +201,8 @@ const Appointment = () => {
               <p
                 onClick={() => setSlotTime(item.Time)}
                 className={`text-sm font-light flex-shrink-0 px-5 py-2 rounded-full cursor-pointer ${item.Time === slotTime
-                    ? "bg-[#5f6FFF] text-white"
-                    : "text-gray-400 border border-gray-300"
+                  ? "bg-[#5f6FFF] text-white"
+                  : "text-gray-400 border border-gray-300"
                   }`}
                 key={index}
               >

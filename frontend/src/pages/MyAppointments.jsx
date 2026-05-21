@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
+import { generateReceiptPDF } from "../components/ReceiptGenerator";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const MyAppointments = () => {
-  const { backendUrl, token } = useContext(AppContext);
+  const { backendUrl, token, currencySymbol, userData } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
   const [showPayConfirm, setShowPayConfirm] = useState(null); // Track which appointment shows confirm/cancel
 
@@ -58,11 +59,9 @@ const MyAppointments = () => {
 
       if (data.success) {
         toast.success("Payment confirmed successfully!");
-        // Update the payment status in UI
+        // update UI (receipt will only download when user clicks "Download Receipt")
         setAppointments((prev) =>
-          prev.map((item) =>
-            item._id === appointmentId ? { ...item, payment: true } : item
-          )
+          prev.map((item) => (item._id === appointmentId ? { ...item, payment: true } : item))
         );
         setShowPayConfirm(null); // Hide confirm/cancel buttons
       } else {
@@ -161,6 +160,14 @@ const MyAppointments = () => {
                 >
                   Cancel Appointment
                 </button>
+                {item.payment ? (
+                  <button
+                    onClick={() => generateReceiptPDF(item, currencySymbol, userData)}
+                    className="text-sm text-white bg-blue-500 text-center sm:min-w-48 py-2 border rounded hover:bg-blue-600 transition-all duration-300"
+                  >
+                    Download Receipt
+                  </button>
+                ) : null}
               </div>
             </div>
           ))
