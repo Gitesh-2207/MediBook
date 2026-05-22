@@ -212,6 +212,28 @@ const Navbar = () => {
                   CONTACT
                 </NavLink>
 
+                {!token ? (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      navigate("/login");
+                    }}
+                    className="w-full text-center bg-[#5f6FFF] text-white px-6 py-3 rounded-full text-sm font-medium hover:opacity-90 transition-all"
+                  >
+                    Create Account
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      navigate("/my-profile");
+                    }}
+                    className="w-full text-center bg-[#5f6FFF] text-white px-6 py-3 rounded-full text-sm font-medium hover:opacity-90 transition-all"
+                  >
+                    My Profile
+                  </button>
+                )}
+
               </ul>
 
             </div>
