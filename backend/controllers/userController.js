@@ -253,9 +253,10 @@ const confirmPayment = async (req, res) => {
       success: true,
       message: emailResult.success
         ? `Payment updated successfully. Confirmation email sent to ${recipientEmail}.`
-        : "Payment updated successfully, but confirmation email could not be sent.",
+        : `Payment updated successfully, but confirmation email could not be sent. ${emailResult.error || ""}`.trim(),
       emailSent: emailResult.success,
       emailTo: recipientEmail,
+      emailError: emailResult.success ? null : emailResult.error,
     });
   } catch (error) {
     console.error("Confirm payment error:", error);
