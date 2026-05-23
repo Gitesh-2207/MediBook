@@ -5,6 +5,7 @@ import { v2 as cloudinary } from "cloudinary";
 import doctorModel from "../models/doctorModel.js";
 import userModel from "../models/userModel.js";
 import appointmentModel from "../models/appointmentModel.js";
+import sendAppointmentConfirmationEmail from "../utils/emailService.js";
 
 // -------------------- REGISTER USER --------------------
 const registerUser = async (req, res) => {
@@ -230,7 +231,32 @@ const confirmPayment = async (req, res) => {
     appointment.payment = true;
     await appointment.save();
 
-    res.json({ success: true, message: "Payment updated successfully" });
+    const user = await userModel.findById(userId).select("name email");
+    const recipientEmail = user?.email || appointment.userData?.email;
+    const emailResult = await sendAppointmentConfirmationEmail({
+      to: recipientEmail,
+      patientName: user?.name || appointment.userData?.name,
+      appointmentId: appointment._id,
+      doctorName: appointment.docData?.name,
+      slotDate: appointment.slotDate,
+      slotTime: appointment.slotTime,
+      amount: appointment.amount,
+    });
+
+    if (!emailResult.success) {
+      console.error("Payment confirmation email error:", emailResult.error);
+    } else {
+      console.log("Payment confirmation email sent to:", recipientEmail);
+    }
+
+    res.json({
+      success: true,
+      message: emailResult.success
+        ? `Payment updated successfully. Confirmation email sent to ${recipientEmail}.`
+        : "Payment updated successfully, but confirmation email could not be sent.",
+      emailSent: emailResult.success,
+      emailTo: recipientEmail,
+    });
   } catch (error) {
     console.error("Confirm payment error:", error);
     res.json({ success: false, message: error.message });

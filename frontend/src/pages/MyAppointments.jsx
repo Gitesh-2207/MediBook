@@ -58,7 +58,11 @@ const MyAppointments = () => {
       );
 
       if (data.success) {
-        toast.success("Payment confirmed successfully!");
+        if (data.emailSent) {
+          toast.success(data.message);
+        } else {
+          toast.warning(data.message || "Payment confirmed, but email was not sent.");
+        }
         // update UI (receipt will only download when user clicks "Download Receipt")
         setAppointments((prev) =>
           prev.map((item) => (item._id === appointmentId ? { ...item, payment: true } : item))
