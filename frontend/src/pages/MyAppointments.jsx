@@ -78,18 +78,18 @@ const MyAppointments = () => {
       );
 
       if (data.success) {
-        if (data.emailSent === true || data.emailSent === "queued") {
+        if (data.emailSent === true) {
           showPaymentToast(data);
         } else {
+          const emailFailureMessage =
+            data.emailError ||
+            data.message ||
+            "Email could not be sent right now. You can still download the receipt.";
+
           toast.warning(
             <div>
               <p className="font-semibold">Payment confirmed</p>
-              <p className="text-sm">
-                Email could not be sent right now. You can still download the receipt.
-              </p>
-              {data.emailError ? (
-                <p className="text-xs mt-1 text-gray-600">{data.emailError}</p>
-              ) : null}
+              <p className="text-sm">{emailFailureMessage}</p>
             </div>,
             {
               autoClose: 7000,

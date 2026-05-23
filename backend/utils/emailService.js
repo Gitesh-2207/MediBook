@@ -2,26 +2,36 @@ import nodemailer from "nodemailer";
 
 const getEnv = (key) => process.env[key]?.trim();
 
-const emailHost = getEnv("EMAIL_HOST");
-const emailPort = getEnv("EMAIL_PORT") ? Number(getEnv("EMAIL_PORT")) : 587;
-const emailUser = getEnv("EMAIL_USER");
-const emailPass = getEnv("EMAIL_PASS");
-const emailFrom = getEnv("EMAIL_FROM") || emailUser;
-const secure = getEnv("EMAIL_SECURE") === "true";
+const getEmailConfig = () => {
+    const host = getEnv("EMAIL_HOST");
+    const port = getEnv("EMAIL_PORT") ? Number(getEnv("EMAIL_PORT")) : 587;
+    const user = getEnv("EMAIL_USER");
+    const pass = getEnv("EMAIL_PASS");
 
-const transporter = nodemailer.createTransport({
-    host: emailHost,
-    port: emailPort,
-    secure,
-    family: 4,
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-    auth: {
-        user: emailUser,
-        pass: emailPass,
-    },
-});
+    return {
+        host,
+        port,
+        user,
+        pass,
+        from: getEnv("EMAIL_FROM") || user,
+        secure: getEnv("EMAIL_SECURE") === "true",
+    };
+};
+
+const createTransporter = ({ host, port, secure, user, pass }) =>
+    nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        family: 4,
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
+        auth: {
+            user,
+            pass,
+        },
+    });
 
 const sendAppointmentConfirmationEmail = async ({
     to,
@@ -32,7 +42,9 @@ const sendAppointmentConfirmationEmail = async ({
     slotTime,
     amount,
 }) => {
-    if (!emailHost || !emailUser || !emailPass) {
+    const emailConfig = getEmailConfig();
+
+    if (!emailConfig.host || !emailConfig.user || !emailConfig.pass) {
         return {
             success: false,
             error:
@@ -45,7 +57,7 @@ const sendAppointmentConfirmationEmail = async ({
     }
 
     const mailOptions = {
-        from: emailFrom,
+        from: emailConfig.from,
         to,
         subject: "Payment Confirmed - MediBook Appointment",
         html: `
@@ -111,8 +123,15 @@ const sendAppointmentConfirmationEmail = async ({
     };
 
     try {
-        await transporter.sendMail(mailOptions);
-        return { success: true };
+        const transporter = createTransporter(emailConfig);
+        const info = await transporter.sendMail(mailOptions);
+        return {
+            success: true,
+            accepted: info.accepted || [],
+            rejected: info.rejected || [],
+            messageId: info.messageId,
+            response: info.response,
+        };
     } catch (error) {
         return { success: false, error: error.message || "Failed to send email." };
     }
