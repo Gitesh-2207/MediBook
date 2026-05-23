@@ -8,6 +8,23 @@ const MyAppointments = () => {
   const { backendUrl, token, currencySymbol, userData } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
   const [showPayConfirm, setShowPayConfirm] = useState(null); // Track which appointment shows confirm/cancel
+  const [payingAppointmentId, setPayingAppointmentId] = useState(null);
+
+  const showPaymentToast = (data) => {
+    const emailText = data.emailTo
+      ? `Confirmation email: ${data.emailTo}`
+      : "Confirmation email will be sent shortly.";
+
+    toast.success(
+      <div>
+        <p className="font-semibold">Payment confirmed</p>
+        <p className="text-sm">{emailText}</p>
+      </div>,
+      {
+        autoClose: 5000,
+      }
+    );
+  };
 
   // -------------------- FETCH USER APPOINTMENTS --------------------
   const getUserAppointments = async () => {
@@ -50,7 +67,10 @@ const MyAppointments = () => {
 
   // -------------------- CONFIRM PAYMENT --------------------
   const confirmPayment = async (appointmentId) => {
+    if (payingAppointmentId) return;
+
     try {
+      setPayingAppointmentId(appointmentId);
       const { data } = await axios.post(
         `${backendUrl}/api/user/confirm-payment`,
         { appointmentId },
@@ -58,11 +78,22 @@ const MyAppointments = () => {
       );
 
       if (data.success) {
-        if (data.emailSent) {
-          toast.success(data.message);
+        if (data.emailSent === true || data.emailSent === "queued") {
+          showPaymentToast(data);
         } else {
           toast.warning(
-            data.message || data.emailError || "Payment confirmed, but email was not sent."
+            <div>
+              <p className="font-semibold">Payment confirmed</p>
+              <p className="text-sm">
+                Email could not be sent right now. You can still download the receipt.
+              </p>
+              {data.emailError ? (
+                <p className="text-xs mt-1 text-gray-600">{data.emailError}</p>
+              ) : null}
+            </div>,
+            {
+              autoClose: 7000,
+            }
           );
         }
         // update UI (receipt will only download when user clicks "Download Receipt")
@@ -75,6 +106,8 @@ const MyAppointments = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setPayingAppointmentId(null);
     }
   };
 
@@ -139,9 +172,10 @@ const MyAppointments = () => {
                     <div className="flex flex-col gap-2">
                       <button
                         onClick={() => confirmPayment(item._id)}
-                        className="text-sm text-white bg-green-500 text-center sm:min-w-48 py-2 border rounded hover:bg-green-600 transition-all duration-300"
+                        disabled={payingAppointmentId === item._id}
+                        className="text-sm text-white bg-green-500 text-center sm:min-w-48 py-2 border rounded hover:bg-green-600 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Confirm Pay
+                        {payingAppointmentId === item._id ? "Confirming..." : "Confirm Pay"}
                       </button>
                       <button
                         onClick={() => setShowPayConfirm(null)}
