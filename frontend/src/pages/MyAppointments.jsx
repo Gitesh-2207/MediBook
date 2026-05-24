@@ -78,7 +78,7 @@ const MyAppointments = () => {
       );
 
       if (data.success) {
-        if (data.emailSent === true) {
+        if (data.emailSent === true || data.emailQueued === true) {
           showPaymentToast(data);
         } else {
           const emailFailureMessage =

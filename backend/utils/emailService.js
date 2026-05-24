@@ -1,4 +1,9 @@
 import nodemailer from "nodemailer";
+import dns from "node:dns";
+
+dns.setDefaultResultOrder("ipv4first");
+
+const { lookup } = dns.promises;
 
 const getEnv = (key) => process.env[key]?.trim();
 
@@ -18,11 +23,14 @@ const getEmailConfig = () => {
     };
 };
 
-const createTransporter = ({ host, port, secure, user, pass }) =>
-    nodemailer.createTransport({
-        host,
+const createTransporter = async ({ host, port, secure, user, pass }) => {
+    const { address } = await lookup(host, { family: 4 });
+
+    return nodemailer.createTransport({
+        host: address,
         port,
         secure,
+        requireTLS: port === 587,
         family: 4,
         connectionTimeout: 10000,
         greetingTimeout: 10000,
@@ -31,7 +39,11 @@ const createTransporter = ({ host, port, secure, user, pass }) =>
             user,
             pass,
         },
+        tls: {
+            servername: host,
+        },
     });
+};
 
 const sendAppointmentConfirmationEmail = async ({
     to,
@@ -123,7 +135,7 @@ const sendAppointmentConfirmationEmail = async ({
     };
 
     try {
-        const transporter = createTransporter(emailConfig);
+        const transporter = await createTransporter(emailConfig);
         const info = await transporter.sendMail(mailOptions);
         return {
             success: true,
@@ -133,7 +145,14 @@ const sendAppointmentConfirmationEmail = async ({
             response: info.response,
         };
     } catch (error) {
-        return { success: false, error: error.message || "Failed to send email." };
+        return {
+            success: false,
+            error: error.message || "Failed to send email.",
+            code: error.code,
+            command: error.command,
+            responseCode: error.responseCode,
+            response: error.response,
+        };
     }
 };
 

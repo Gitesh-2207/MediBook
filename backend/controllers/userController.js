@@ -234,7 +234,7 @@ const confirmPayment = async (req, res) => {
     const user = await userModel.findById(userId).select("name email");
     const recipientEmail = user?.email || appointment.userData?.email;
 
-    const emailResult = await sendAppointmentConfirmationEmail({
+    sendAppointmentConfirmationEmail({
       to: recipientEmail,
       patientName: user?.name || appointment.userData?.name,
       appointmentId: appointment._id,
@@ -242,30 +242,35 @@ const confirmPayment = async (req, res) => {
       slotDate: appointment.slotDate,
       slotTime: appointment.slotTime,
       amount: appointment.amount,
-    });
+    }).then((emailResult) => {
+      if (!emailResult.success) {
+        console.error("Payment confirmation email error:", {
+          error: emailResult.error,
+          code: emailResult.code,
+          command: emailResult.command,
+          responseCode: emailResult.responseCode,
+          response: emailResult.response,
+        });
+        return;
+      }
 
-    if (!emailResult.success) {
-      console.error("Payment confirmation email error:", emailResult.error);
-      return res.json({
-        success: true,
-        message: `Payment updated successfully, but confirmation email could not be sent. ${emailResult.error}`,
-        emailSent: false,
-        emailTo: recipientEmail,
-        emailError: emailResult.error,
+      console.log("Payment confirmation email sent to:", recipientEmail);
+      console.log("Payment confirmation email message id:", emailResult.messageId);
+    }).catch((error) => {
+      console.error("Payment confirmation email unexpected error:", {
+        error: error.message,
+        code: error.code,
+        command: error.command,
+        responseCode: error.responseCode,
+        response: error.response,
       });
-    }
-
-    console.log("Payment confirmation email sent to:", recipientEmail);
-    console.log("Payment confirmation email message id:", emailResult.messageId);
+    });
 
     return res.json({
       success: true,
-      message: `Payment updated successfully. Confirmation email sent to ${recipientEmail}.`,
-      emailSent: true,
+      message: `Payment confirmed. Confirmation email will be sent to ${recipientEmail}.`,
+      emailQueued: true,
       emailTo: recipientEmail,
-      emailMessageId: emailResult.messageId,
-      emailAccepted: emailResult.accepted,
-      emailRejected: emailResult.rejected,
     });
   } catch (error) {
     console.error("Confirm payment error:", error);
